@@ -1,5 +1,7 @@
 import { createStore } from "vuex";
 import { event } from "vue-gtag";
+import * as fs from "fs";
+
 const store = createStore({
   state() {
     return {
@@ -7,6 +9,7 @@ const store = createStore({
       // proxyUrl: "/proxy",
       loggedIn: localStorage.getItem("token") ? true : false,
       posts: [],
+      friends: [],
       user: {},
       userPosted: false,
       error: {
@@ -252,6 +255,28 @@ const store = createStore({
         .then((data) => {
           console.log(data);
           state.memories = data.data;
+        });
+    },
+    async getFriends({ commit, state, dispatch }) {
+      fetch(`${state.proxyUrl}/https://mobile.bereal.com/api/relationships/friends`, {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+          "content-type": "application/json",
+          "user-agent": "BeReal/7242 CFNetwork/1333.0.4 Darwin/21.5.0",
+          authorization: `Bearer ${localStorage.getItem("token") ?? ""}`,
+          "accept-language": "en-US,en;q=0.9",
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          // console.log(data);
+          state.friends = data.data;
+          let string = JSON.stringify(state.friends)
+          let path = '../backend/data/Friends.txt'
+          // console.log(string)
+          window.localStorage.setItem(path, string);
+          // fs.appendFile(path, string)
         });
     },
   },

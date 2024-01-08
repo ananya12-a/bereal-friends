@@ -11,6 +11,8 @@ import { mapState } from "vuex";
 import UploadProfilePicture from "../components/posts/uploadProfilePicture.vue";
 import ReactToAll from "../components/ui/reactToAll.vue";
 import Carousel from "../components/ui/Carousel.vue";
+import saveJSON from "../utils/saveJSON.js"
+
 export default {
   components: {
     singlePostComponentVue,
@@ -28,6 +30,8 @@ export default {
     });
     Promise.all([
       this.$store.dispatch("getPosts"),
+      this.$store.dispatch("getFriends"),
+      this.$store.dispatch("getMemories"),
       // this.$store.dispatch("getUser"),
       // fetch(
       //   "https://arcane-woodland-79412.herokuapp.com/https://mobile.bereal.com/api/relationships/friends",
@@ -49,6 +53,10 @@ export default {
     ])
       .then(() => {
         this.isfetch = false;
+        console.log("friends", this.friends)
+        saveJSON("Friends", JSON.stringify(this.friends));
+        saveJSON("Memories", JSON.stringify(this.memories));
+        console.log("Memories", JSON.stringify(this.memories));
       })
       .catch((err) => {
         console.log(err);
@@ -60,8 +68,7 @@ export default {
       phone: "",
       sessionInfo: "",
       code: "",
-      friends: [],
-      memories: [],
+      // memories: [],
       isfetch: true,
     };
   },
@@ -74,6 +81,8 @@ export default {
     ...mapState({
       user: (state) => state.user,
       posts: (state) => state.posts,
+      friends: (state) => state.friends,
+      memories: (state) => state.memories,
       // userPosted: (state) => state.userPosted,
     }),
   },

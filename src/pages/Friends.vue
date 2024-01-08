@@ -35,6 +35,7 @@ export default {
         .then((res) => {
           this.profiles = res.data;
           this.nonefound = res.data.length === 0;
+          console.log(res)
         });
     },
   },
